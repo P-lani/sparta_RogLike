@@ -7,6 +7,7 @@ import {startGame, Player, Monster} from "./game.js";
 export function displayLobby() {
     console.clear();
 
+    console.log(chalk.greenBright('♣ '.repeat(37)));
     // 타이틀 텍스트
     console.log(
         chalk.cyan(
@@ -19,10 +20,11 @@ export function displayLobby() {
     );
 
     // 상단 경계선
-    const line = chalk.magentaBright('='.repeat(73));
-    console.log(line);
+    const line = chalk.cyanBright('='.repeat(73));
+    console.log(chalk.greenBright('♣ '.repeat(37)));
 
     // 게임 이름
+    console.log(line);
     console.log(chalk.yellowBright.bold('1000 m 등산을 목표로 '));
     console.log(chalk.yellowBright.bold('동네 뒷산을 등반하자 !'));
 
@@ -31,9 +33,10 @@ export function displayLobby() {
     console.log();
 
     // 옵션들
+    console.log(line);
     console.log(chalk.blue('1.') + chalk.white(' 등산 시작'));
-    console.log(chalk.blue('2.') + chalk.white(' 업적 확인하기'));
-    console.log(chalk.blue('3.') + chalk.white(' 옵션'));
+    console.log(chalk.blue('2.') + chalk.gray(' 업적 확인하기'));
+    console.log(chalk.blue('3.') + chalk.gray(' 도움말'));
     console.log(chalk.blue('4.') + chalk.white(' 종료'));
 
     // 하단 경계선
@@ -59,8 +62,12 @@ export function handleUserInput() {
             handleUserInput();
             break;
         case '3':
-            console.log(chalk.blue('구현 준비중입니다.. 게임을 시작하세요'));
-            // 옵션 메뉴 로직을 구현
+            // 도움말 
+            console.log(chalk.blue('도움말을 오픈합니까?'));
+            const doumMal = readlineSync.keyInYN('예(Y) / 아니오(N)');
+            if(doumMal) {
+                console.log(chalk.blue('하지만 미완성 입니다.'));
+            } else { console.log(chalk.blue('도움말 열기 취소.'));}
             handleUserInput();
             break;
         case '4':

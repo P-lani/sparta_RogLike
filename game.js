@@ -15,7 +15,7 @@ export class Player {
     this.hp = 220;
     this.power = 15;
     this.powerMore = 20;
-    this.skillChance = 30;
+    this.skillChance = 35;
     this.specialMovePoint = 3; // Test를 위해서 3으로 시작, 원래 0 시작입니다 !
   }
   // 플레이어의 공격
@@ -44,14 +44,14 @@ export class Player {
       let specialMoveCount = Math.floor((Math.random()*5)+5);
       let total = 0;
       for(let i = 0; i < specialMoveCount ; i++) {
-        let moveDis = Math.floor(this.power* ((Math.random()*this.powerMore/100)+1).toFixed(1));  //이거.. 맞아?
+        let moveDis = Math.floor(this.power* ((Math.random()*this.powerMore/100)+1).toFixed(1));
         monster.hp = monster.hp - moveDis
         console.log(chalk.redBright(`[${i+1}]회 ! `)+chalk.yellow(`${moveDis}M 등반!!`));
         total += moveDis
         await delay(0.12)
       }
       await delay(1)
-    player.specialMovePoint = 0;
+    this.specialMovePoint = 0;
     logs.push(chalk.redBright(`★ 총 ${specialMoveCount} 회`)+chalk.yellow(` 연 속 등 반 ! ★ `));
     logs.push(chalk.cyanBright(`▲  총 [${total}M] 의 거리를 등반했다. `));
   }
@@ -67,28 +67,8 @@ export class Player {
       }else {
       let playerSkill2Random = Math.floor(Math.random()*100+1)
       if ( playerSkill2Random >= 90) {
-        let hitKoDisplay = "It's a one-hit KO!"
-        let hitKoDisplay2 = ""
-        monster.hp = 0;
-        for(let i = 0; i < hitKoDisplay.length; i++){
-        console.clear();
-        hitKoDisplay2 += hitKoDisplay[i]
-        console.log(chalk.yellowBright('='.repeat(75)));
-        console.log(
-          chalk.redBright(
-              figlet.textSync(hitKoDisplay2, {
-                  font: 'Standard',
-                  horizontalLayout: 'default',
-                  verticalLayout: 'default'
-                  
-              })
-          )
-      );
-      console.log(chalk.yellowBright('='.repeat(75)));
-      await delay(0.08)
-        }
-        
-
+       await TestText("It's a one-hit KO!", 0.08, chalk.red)
+      monster.hp = 0;
       console.log(chalk.yellowBright(`\n 지름길을 발견했다 !!`));
       readlineSync.keyIn('\n 스페이스바를 눌러주세요 !');
       logs.push(chalk.bgRedBright.bold(`일격필살 !`));
@@ -135,20 +115,17 @@ const battle = async (stage, player, monster) => {
   let logs = [];
 
 
-  // 컨셉 상, 막타를 쳐도 체력이 소모되어야 한다...
-  // 그렇기 때문에, 마지막 턴 계산까지 디스플레이 해야함
-
+  // 마지막 턴의 계산까지 디스플레이를 하기 위한 방법?
   while(true) { //혼날것 같은 while true 두두둥..
     console.clear();
     displayStatus(stage, player, monster);
 
   //로그가 너무 많으면 정리한 후 출력
-   while(logs.length >12) {logs.shift();}
+   while(logs.length >14) {logs.shift();}
    logs.forEach((log) => console.log(log));
 
    // 디스플레이 반영 끝난 뒤 처리
-    if (monster.hp < 1) { break;}
-    if (player.hp < 1) { break;}
+    if (monster.hp < 1 || player.hp < 1) { break;}
 
 
   // 행동 메뉴 출력
@@ -192,20 +169,35 @@ const battle = async (stage, player, monster) => {
   console.clear();
   console.log(chalk.magentaBright(`\n===================== 랜 덤 보 상 =====================`));
   console.log(
-    chalk.cyanBright(` | 5가지 종류의 랜덤한 보상 !!                     |`) +
+    chalk.cyanBright(` | 5 가지 종류의 랜덤한 보상 !!                     |`) +
     chalk.blueBright(`\n | 확률은 동일합니다 !  (아닐수도 있습니다...)     |`) +
     chalk.redBright( `\n | 필살 ! 암벽등반 ! 은 5~10회 등반을 시도합니다.  |`,
     ),
   );
   console.log(chalk.magentaBright(`=======================================================\n`));
-  console.log(chalk.cyanBright(`랜덤 보상 3가지를 획득합니다.`));
-  await delay(0.4)
+  if (stage === 6 ) {
+    console.log(chalk.cyanBright.bold(` 중간 BOSS : 급경사로 돌파 !! 보상을 5회 획득합니다.\n`));
+    await delay(0.3)
+     RandomReward(player, monster, stage);
+     await delay(0.3)
+     RandomReward(player, monster, stage);
+     await delay(0.3)
+     RandomReward(player, monster, stage);
+     await delay(0.3)
+     RandomReward(player, monster, stage);
+     await delay(0.3)
+     RandomReward(player, monster, stage);
+     await delay(0.3)
+  }else {
+  console.log(chalk.cyanBright(`랜덤 보상을 3회 획득합니다.`));
+  await delay(0.3)
+   RandomReward(player, monster, stage);
+   await delay(0.3)
+   RandomReward(player, monster, stage);
+   await delay(0.3)
    RandomReward(player, monster, stage);
    await delay(0.4)
-   RandomReward(player, monster, stage);
-   await delay(0.4)
-   RandomReward(player, monster, stage);
-   await delay(0.6)
+}
 }
 
 // 랜덤 뽑기 보상 ~~ !
@@ -218,7 +210,7 @@ function RandomReward(player, monster, stage) {
          
       // 보상 종류 1 : 회복
   if ( Reward >= 80) {
-    let playerHpRestoration = Math.floor(RewardMulty*(stage*18+50))
+    let playerHpRestoration = Math.floor(RewardMulty*(stage*18+10))
     console.log(chalk.yellowBright(`산바람이 시원하다. 체력이 [${playerHpRestoration}] 회복되었다 !`));
     console.log(chalk.greenBright(`● 체력 [${player.hp}] ☞  [${ player.hp + playerHpRestoration}]`));
     player.hp += playerHpRestoration
@@ -251,7 +243,7 @@ function RandomReward(player, monster, stage) {
   }
     //보상 종류 5 : 꽝으로 마무리?-> 축지법 성공률로 대체했다.
   } else {
-    let skillChanceInc = Math.floor(4*RewardMulty);
+    let skillChanceInc = Math.floor(3*RewardMulty);
     console.log(chalk.yellowBright(`보법이 달라졌다. 축지법 성공률이 ${skillChanceInc}% 증가했다 !`));
     console.log(chalk.greenBright(`● 축지법 성공률 [${player.skillChance}%] ☞  [${player.skillChance + skillChanceInc <= 75 ? player.skillChance + skillChanceInc : 75 }%]`));
     player.skillChance += skillChanceInc;
@@ -266,61 +258,53 @@ function RandomReward(player, monster, stage) {
 export async function startGame() {
   console.clear();
   const player = new Player();
-  let stage = 0;
+  let stage = 0; 
+
+  // player.power = 111111111 // 테스트용 tttt
+  // // stage = 10;             //테스트용
     while (stage <= 10) {
 
-
-      //몬스터 생성 (name, hp, attack, stage)
-      let RandomName = ["오르막 등산로", "내리막 등산로", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "낙석주의", "고라니가 다니는 길"];
+      //몬스터 생성
+      let RandomName = ["오르막길", "내리막길", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "낙석주의", "고라니가 다니는 길", "챔피언스 로드",
+          "한적한 등산로", "송전탑 아래", "단풍나무 아래", "누군가의 무덤을 지나서" , "계곡 길"];
       let RandomNameChoice = Math.floor(Math.random()*RandomName.length)
       
-      const monster = new Monster(RandomName[RandomNameChoice], 50, 6);
+      const monster = new Monster(RandomName[RandomNameChoice], 70, 5);
 
-      //10층
+      //10층 막보
       if ( stage % 10 === 0 && stage !== 0 ) {
-      monster.name = "최종BOSS 정상으로 향하는 길"
+      monster.name = "최종BOSS : 정상으로 향하는 길"
       monster.hp = 2999
-      monster.attack = 199 
+      monster.attack = 180
       }
-      //5층
+      //5층 중보
       else if ( stage % 5 === 0 && stage !== 0 ) {
-      monster.name = "중간BOSS 급 경사로"
-      monster.hp = 400
-      monster.attack = 40
+      monster.name = "중간BOSS : 급경사로"
+      monster.hp = 550
+      monster.attack = 55
       }
       //일반 층
       else {
-        monster.hp += stage*5+stage**3
-        monster.attack += stage+stage**2
+        monster.hp += stage*60+stage**3
+        monster.attack += stage*1+stage**2
       }
     //배틀 진입
     await battle(stage, player, monster);
 
 
-    // 스테이지 클리어 및 게임 종료 조건
-    // 패배
+  
+    // 패배 시
     if (player.hp < 1 ) {
-          console.log(chalk.yellowBright("체력이 모두 소모되었다......."));
-          console.log(chalk.redBright("등산가는 눈앞이 깜깜해졌다......."));
-
-          console.log(
-            chalk.redBright(
-                figlet.textSync('GAME - OVER', {
-                    font: 'Standard',
-                    horizontalLayout: 'default',
-                    verticalLayout: 'default'
-                })
-            )
-        );
-          readlineSync.keyIn('\n 스페이스 바를 눌러서 시작화면으로 돌아갑니다.');
-          displayLobby();
-          handleUserInput();
-          break;
+      await gameover();
+      readlineSync.keyIn('\n 스페이스 바를 눌러서 시작화면으로 돌아갑니다.');
+      displayLobby();
+      handleUserInput();
+      break;
         }
 
 
 
-    // 승리
+    // 스테이지 승리
     if (monster.hp < 1 && stage < 10) {
       await monsterDefeat(player, stage);
       readlineSync.keyIn('\n스페이스바를 눌러서 보상 페이지로 !');
@@ -337,7 +321,7 @@ export async function startGame() {
 
   }
    
-    // 10층 클리어 시
+    // 10층 클리어 엔딩
     if(stage > 10) {
       await clearEnding();
     }
@@ -348,31 +332,48 @@ export async function startGame() {
 async function monsterDefeat (player, stage) {
 console.log(chalk.yellowBright(`=================================`));
 console.log(chalk.yellowBright(`${stage*100}M 구간 클리어 !`));
-console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*20+100} 만큼 회복되었다 !`));
-player.hp += stage*10+15
+console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*20+50} 만큼 회복되었다 !`));
+player.hp += stage*20+100
 console.log(chalk.yellowBright(`${stage*100+100}M 구간 진입`));
 console.log(chalk.yellowBright(`=================================`));
 }
 
 
+// 패배시 엔딩
+async function gameover () {
+  console.log(chalk.yellowBright("체력이 모두 소모되었다......."));
+  console.log(chalk.redBright("등산가는 눈앞이 깜깜해졌다......."));
+ await delay(2);
+ await TestText("GAME - OVER", 0.3, chalk.redBright)
 
+}
 // 엔딩 ..?
 async function clearEnding () {
-  console.log(chalk.yellowBright(`==========================================`));
-  console.log(
-    chalk.yellowBright(
-        figlet.textSync('CLEAR !!!', {
-            font: 'Standard',
-            horizontalLayout: 'default',
-            verticalLayout: 'default'
-        })
-    )
-);
-console.log(chalk.yellowBright(`==========================================`));
+  await delay(1.6)
+  await TestText("GAME-CLEAR!!", 0.12, chalk.yellowBright)
+  await delay(0.3)
 console.log(chalk.greenBright(`1000M 등산 완료 !`));
+await delay(0.4)
 console.log(chalk.cyanBright(`동네 뒷산을 정복했습니다.`));
+await delay(0.4)
   readlineSync.keyIn('\n스페이스바를 눌러서 시작 화면으로 !');
   displayLobby();
   handleUserInput();
 
+}
+
+
+// TEST 문자 출력
+async function TestText (text, setDelay, color) {
+  let TestTextMes = ""
+  for (let i = 0; i < text.length ; i++){
+    console.clear()
+    TestTextMes += text[i]
+    console.log(color(('='.repeat(75))));
+    console.log(color(figlet.textSync(TestTextMes)));
+    console.log(color(('='.repeat(75))));
+
+await delay(setDelay);
+}
+await delay(0.5);
 }
