@@ -53,7 +53,6 @@ function delay(sec) {
 
  // 지름길  일격기
   async playerSkill2 (monster, logs){
-       await TextMoveStan("It's a one-hit KO!", 0.06, chalk.red, chalk.yellowBright)
       monster.hp = 0;
       console.log(chalk.yellowBright(`\n 지름길을 발견했다 !!`));
       readlineSync.keyIn('\n 스페이스바를 눌러주세요 !');
@@ -463,13 +462,12 @@ async function gameover () {
   console.log(chalk.yellowBright("체력이 모두 소모되었다......."));
   console.log(chalk.redBright("등산가는 눈앞이 깜깜해졌다......."));
  await delay(2);
- await TextMoveStan("GAME - OVER", 0.3, chalk.redBright, chalk.white)
 
 }
 // 엔딩 ..?
 async function clearEnding () {
   await delay(1.6)
-  await TextMoveStan("GAME-CLEAR!!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
+  await TestText("GAME-CLEAR!!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
   await delay(0.3)
 console.log(chalk.greenBright(`1000M 등산 완료 !`));
 await delay(0.4)
@@ -483,7 +481,7 @@ await delay(0.4)
 
 
 // TEST 문자열 앞에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
-export async function TextMoveStan (text, setDelay, color, varcolor) {
+export async function TestText (text, setDelay, color, varcolor) {
   let TestTextMes = ""
   for (let i = 0; i < text.length ; i++){
     console.clear()
@@ -498,7 +496,7 @@ await delay(0.5);
 }
 
 // TEST 문자 뒤에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
-export async function TextMoveLeft (text, setDelay, color, varcolor) {
+export async function TextMoveL (text, setDelay, color, varcolor) {
   let TestTextMes = ""
   for (let i = 0; i < text.length ; i++){
     console.clear();
