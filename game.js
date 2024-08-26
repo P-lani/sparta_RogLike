@@ -385,7 +385,7 @@ export async function startGame() {
     while (stage <= 10) {
 
       //몬스터 생성
-      let RandomName = ["오르막길", "내리막길", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "고라니가 다니는 길", "한적한 등산로", "송전탑 아래", "단풍나무 아래", "누군가의 무덤 근처" , "계곡", "산비탈", "레드 드래곤"];
+      let RandomName = ["오르막길", "내리막길", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "고라니가 다니는길", "한적한 등산로", "송전탑 아래", "단풍나무 아래", "누군가의 무덤 근처" , "계곡", "산비탈", "레드 드래곤"];
       let RandomNameChoice = Math.floor(Math.random()*RandomName.length)
       
       const monster = new Monster(RandomName[RandomNameChoice], 70, 5);
