@@ -405,7 +405,7 @@ export async function startGame() {
       //일반 층
       else {
         monster.hp += stage*80+stage**3
-        monster.attack += stage*1+stage**2
+        monster.attack += stage*2+stage**2
       }
     //배틀 진입
     await battle(stage, player, monster);
@@ -451,8 +451,8 @@ export async function startGame() {
 async function monsterDefeat (player, stage) {
 console.log(chalk.greenBright(`=======================================`));
 console.log(chalk.yellowBright(`${stage*100}M 구간 클리어 !`));
-console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*20+200} 만큼 회복되었다 !`));
-player.hp += stage*20+200
+console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*25+100} 만큼 회복되었다 !`));
+player.hp += stage*25+100
 console.log(chalk.yellowBright(`${stage*100+100}M 구간 진입`));
 console.log(chalk.greenBright(`=======================================`));
 }
@@ -469,7 +469,7 @@ async function gameover () {
 // 엔딩 ..?
 async function clearEnding () {
   await delay(1.6)
-  await TestText("GAME-CLEAR!!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
+  await TestText("GAME-CLEAR !!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
   await delay(0.3)
 console.log(chalk.greenBright(`1000M 등산 완료 !`));
 await delay(0.4)
