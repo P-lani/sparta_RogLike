@@ -404,7 +404,7 @@ export async function startGame() {
       }
       //일반 층
       else {
-        monster.hp += stage*60+stage**3
+        monster.hp += stage*80+stage**3
         monster.attack += stage*1+stage**2
       }
     //배틀 진입
