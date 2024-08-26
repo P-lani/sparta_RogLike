@@ -53,6 +53,7 @@ function delay(sec) {
 
  // 지름길  일격기
   async playerSkill2 (monster, logs){
+       await TestText("It's a one-hit KO!", 0.06, chalk.red, chalk.yellowBright)
       monster.hp = 0;
       console.log(chalk.yellowBright(`\n 지름길을 발견했다 !!`));
       readlineSync.keyIn('\n 스페이스바를 눌러주세요 !');
@@ -462,6 +463,7 @@ async function gameover () {
   console.log(chalk.yellowBright("체력이 모두 소모되었다......."));
   console.log(chalk.redBright("등산가는 눈앞이 깜깜해졌다......."));
  await delay(2);
+ await TestText("GAME - OVER", 0.3, chalk.redBright, chalk.white)
 
 }
 // 엔딩 ..?
