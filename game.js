@@ -496,3 +496,23 @@ await delay(setDelay);
 }
 await delay(0.5);
 }
+
+// TEST 문자 뒤에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
+export async function TextMoveLeft (text, setDelay, color, varcolor) {
+  let TestTextMes = ""
+  for (let i = 0; i < text.length ; i++){
+    console.clear();
+    TestTextMes = text.slice(text.length-i-1,text.length)
+    console.log(varcolor(('='.repeat(75))));
+    console.log(color(figlet.textSync(TestTextMes, {
+      font: 'Standard',
+      horizontalLayout: 'default',
+      verticalLayout: 'default'
+  })));
+    console.log(varcolor(('='.repeat(75))));
+
+await delay(setDelay);
+}
+await delay(0.5);
+}
+
