@@ -337,7 +337,7 @@ function RandomReward(player, stage) {
     
     //보상 종류 2 : 공격력
   } else if ( Reward >= 60) {
-    let playerPowerInc = Math.floor(RewardMulty*(stage*2+5))
+    let playerPowerInc = Math.floor(RewardMulty*(stage*3+7))
     console.log(chalk.yellowBright(`근육이 늘었다. 최소 등산력이 [${playerPowerInc}] 증가했다 !`));
     console.log(chalk.greenBright(`● 등산력 [${player.power}] ☞  [${player.power + playerPowerInc}]`));
     player.power += playerPowerInc
@@ -345,7 +345,7 @@ function RandomReward(player, stage) {
 
     //보상 종류 3 : 공격 배율
   } else if ( Reward >= 40) {
-    let playerPowerMulty = Math.floor(RewardMulty*(stage*2+7))
+    let playerPowerMulty = Math.floor(RewardMulty*(stage*2+10))
     console.log(chalk.yellowBright(`산에 버려진 무공비급을 찾았다. 최대배율이 [${playerPowerMulty}] 증가했다 !`));
     console.log(chalk.greenBright(`● 최대배율 [${player.powerMore}] ☞  [${player.powerMore + playerPowerMulty}]`));
     player.powerMore += playerPowerMulty
@@ -399,8 +399,8 @@ export async function startGame() {
       //5층 중보
       else if ( stage % 5 === 0 && stage !== 0 ) {
       monster.name = "중간BOSS : 계단지옥"
-      monster.hp = 550
-      monster.attack = 55
+      monster.hp = 777
+      monster.attack = 77
       }
       //일반 층
       else {
@@ -451,8 +451,8 @@ export async function startGame() {
 async function monsterDefeat (player, stage) {
 console.log(chalk.greenBright(`=======================================`));
 console.log(chalk.yellowBright(`${stage*100}M 구간 클리어 !`));
-console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*20+50} 만큼 회복되었다 !`));
-player.hp += stage*20+100
+console.log(chalk.yellowBright(`휴식을 취해 체력이 ${stage*20+200} 만큼 회복되었다 !`));
+player.hp += stage*20+200
 console.log(chalk.yellowBright(`${stage*100+100}M 구간 진입`));
 console.log(chalk.greenBright(`=======================================`));
 }
