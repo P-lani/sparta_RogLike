@@ -232,7 +232,7 @@ const battle = async (stage, player, monster) => {
       break;
       case '3' : // 3. 필살 !! 암벽등반 !
       if(player.specialMovePoint === 3) {
-        let specialMoveCount = Math.floor((Math.random()*5)+5);
+        let specialMoveCount = Math.floor((Math.random()*6)+5);
       await player.playerSpecialMove(monster, specialMoveCount, logs);
         await delay(0.7)
       player.specialMovePoint = 0;
@@ -263,7 +263,7 @@ const battle = async (stage, player, monster) => {
         } else {
           displayReset(stage, player, monster, logs);
           await delay(0.2)
-        logs.push(chalk.redBright(`지름길 개척 !`)+chalk.green(` 하지만, 실패했다 ! 제자리 걸음 !`));
+        logs.push(chalk.redBright(`지름길 개척 !`)+chalk.green(` 하지만, 실패했다 ! 주사위[${playerSkill2Random}] | [90이상 성공]`));
         displayReset(stage, player, monster, logs);
         await delay(0.2)
         monster.monsterTurnChoice(player, logs);
