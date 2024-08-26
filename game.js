@@ -17,7 +17,7 @@ function delay(sec) {
     this.power = 18;
     this.powerMore = 20;
     this.skillChance = 35;
-    this.specialMovePoint = 3; // Test를 위해서 3으로 시작, 원래 0 시작입니다 !
+    this.specialMovePoint = 3; // 원활한 Test를 위해서 3으로 시작, 원래 0 시작입니다 !
   }
   // 플레이어의 공격
     async playerAttack (monster, logs) {
