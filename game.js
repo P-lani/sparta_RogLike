@@ -385,27 +385,21 @@ export async function startGame() {
     while (stage <= 10) {
 
       //몬스터 생성
-      let RandomName = ["오르막길", "내리막길", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "고라니가 다니는길", "한적한 등산로", "송전탑 아래", "단풍나무 아래", "누군가의 무덤 근처" , "계곡", "산비탈", "레드 드래곤"];
+      let RandomName = ["오르막길", "내리막길", "칼바람 나락", "평범한 등산로", "등산로", "세 갈래 길", "세계의 눈물 중단2", "고라니가 다니는길", "한적한 등산로", "송전탑 지나서", "단풍나무 아래", "누군가의 무덤 근처" , "계곡", "산비탈", "레드 드래곤"];
       let RandomNameChoice = Math.floor(Math.random()*RandomName.length)
-      
-      const monster = new Monster(RandomName[RandomNameChoice], 70, 5);
+      let monster;
 
       //10층 막보
       if ( stage % 10 === 0 && stage !== 0 ) {
-      monster.name = "최종BOSS : 정상으로 향하는 길"
-      monster.hp = 2999
-      monster.attack = 180
+        monster = new Monster("최종BOSS : 정상으로 향하는 길",2999, 180)
       }
       //5층 중보
       else if ( stage % 5 === 0 && stage !== 0 ) {
-      monster.name = "중간BOSS : 계단지옥"
-      monster.hp = 777
-      monster.attack = 77
+        monster = new Monster("중간BOSS : 계단지옥",777, 77)
       }
       //일반 층
       else {
-        monster.hp += stage*80+stage**3
-        monster.attack += stage*2+stage**2
+        monster = new Monster(RandomName[RandomNameChoice], stage*80+stage**3+80, stage*2+stage**2+8)
       }
     //배틀 진입
     await battle(stage, player, monster);
