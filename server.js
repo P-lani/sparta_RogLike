@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import figlet from 'figlet';
 import readlineSync from 'readline-sync';
-import {startGame, TextMoveL} from "./game.js";
+import {startGame, textEffectReverse} from "./game.js";
 
 function delay(sec) {
     return new Promise(resolve => setTimeout(resolve, sec * 1000))
@@ -9,7 +9,7 @@ function delay(sec) {
   
 // 로비 화면을 출력하는 함수
 export async function displayLobby() {
-    await TextMoveL("HIKING - 1000 M", 0.08, chalk.black, chalk.black );
+    await textEffectReverse("HIKING - 1000 M", 0.08, chalk.black, chalk.black );
     console.clear();
     console.log(chalk.greenBright('♣ '.repeat(37)));
     // 타이틀 텍스트
