@@ -53,7 +53,7 @@ class Player {
 
   // 지름길  일격기
   async playerSkill2(monster, logs) {
-    await TestText("It's a one-hit KO!", 0.06, chalk.red, chalk.yellowBright)
+    await textEffect("It's a one-hit KO!", 0.06, chalk.red, chalk.yellowBright)
     monster.hp = 0;
     console.log(chalk.yellowBright(`\n 지름길을 발견했다 !!`));
     readlineSync.keyIn('\n 스페이스바를 눌러주세요 !');
@@ -97,10 +97,9 @@ class Monster {
     else if (monsterPattern > 6) {
       await this.monsterPattern4(player, logs);
     }
-    // 6% 
+    // 6% 확률로 체력소모 없음
     else {
       logs.push(chalk.yellow(` ☞  ${this.name}의 공격 ! 하지만 빗나갔다 !! `));
-
     }
 
   }
@@ -156,20 +155,23 @@ async function displayStatus(stage, player, monster) {
   console.log(chalk.magentaBright(`=============================================================\n`));
 }
 
-// 화면 초기화
-function displayReset(stage, player, monster, logs) {
-  console.clear();
-  displayStatus(stage, player, monster);
-  while (logs.length > 14) { logs.shift(); }
-  logs.forEach((log) => console.log(log));
-
+// **NEW**  전투로그 출력 함수
+async function printLogs (logs, oldLogs) {
+  for (let log of oldLogs) {
+    console.log(log)
+  }
+  for (let log of logs) {
+    await delay(0.2)
+    console.log(log)
+    oldLogs.push(log)
+  }
+  if (logs.length != 0) {await delay(0.3)};
 }
-
 
 // 배틀
 const battle = async (stage, player, monster) => {
   let logs = [];
-
+  let oldLogs = [];
 
   // 마지막 턴의 계산까지 디스플레이를 하기 위한 방법?
   while (true) { //혼날것 같은 while true
@@ -177,12 +179,16 @@ const battle = async (stage, player, monster) => {
     displayStatus(stage, player, monster);
 
     //로그가 너무 많으면 정리한 후 출력
-    while (logs.length > 14) { logs.shift(); }
-    logs.forEach((log) => console.log(log));
+    //로그 출력 방법 변경으로 쌓이게되는 oldLogs 를 짜르도록 변경
+    while (oldLogs.length > 14) { oldLogs.shift(); }
+  
+    // 로그 출력... 개선.......
+    // logs.forEach((log) => console.log(log)); 부분을 따로 함수로 만들었다.
+    await printLogs(logs, oldLogs)
+    logs = []; 
 
     // 디스플레이 반영 끝난 뒤 처리
     if (monster.hp < 1 || player.hp < 1) { break; }
-
 
     // 행동 메뉴 출력
     console.log(
@@ -193,57 +199,35 @@ const battle = async (stage, player, monster) => {
 4. 지름길 개척     :  낮은 확률로 등산로를 패스합니다. `,
       ),
     );
+
     const choice = readlineSync.question('행동을 선택해 주세요. (1-4 입력) ');
 
     //행동 선택지
     switch (choice) {
       case '1': // 1.  등반하기
-        displayReset(stage, player, monster, logs);
-        await delay(0.2)
         await player.playerAttack(monster, logs);
-        displayReset(stage, player, monster, logs);
-        await delay(0.2)
         await monster.monsterTurnChoice(player, logs)
-        displayReset(stage, player, monster, logs);
-        await delay(0.2)
         break;
+
       case '2': // 2. 축지법 
         if (Math.random() * 100 <= player.skillChance) {
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
           player.playerSkill(logs);
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
           player.playerAttack(monster, logs);
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
         } else {
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
           logs.push(chalk.cyan(`▼ 축지법 실패다아아앗! 제자리 걸음 !`));
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
           monster.monsterTurnChoice(player, logs);
-          displayReset(stage, player, monster, logs);
-          await delay(0.2)
-
         }
 
         break;
+
       case '3': // 3. 필살 !! 암벽등반 !
         if (player.specialMovePoint === 3) {
           let specialMoveCount = Math.floor((Math.random() * 6) + 5);
           await player.playerSpecialMove(monster, specialMoveCount, logs);
           await delay(0.7)
           player.specialMovePoint = 0;
-          displayReset(stage, player, monster, logs);
-          await delay(0.3)
           logs.push(chalk.redBright(`★ 총 ${specialMoveCount} 회`) + chalk.yellow(` 연 속 등 반 ! ★ `));
-          displayReset(stage, player, monster, logs);
-          await delay(0.3)
           await monster.monsterTurnChoice(player, logs)
-          displayReset(stage, player, monster, logs);
-          await delay(0.3)
         }
         else {
           logs.push(chalk.green(`※ 필살 충전이 부족합니다. ☞ 현재 충전 : [${player.specialMovePoint}]`));
@@ -251,6 +235,7 @@ const battle = async (stage, player, monster) => {
 
 
         break;
+        
       case '4': // 4. 지름길..
         if (stage % 5 === 0 && stage !== 0) {
           logs.push(chalk.green(` 여기는 지름길을 찾을 수 없어 !`) + chalk.red(`  [BOSS전 사용 불가]`));
@@ -258,17 +243,9 @@ const battle = async (stage, player, monster) => {
           let playerSkill2Random = Math.floor(Math.random() * 100 + 1)
           if (playerSkill2Random >= 90) {
             await player.playerSkill2(monster, logs);
-            displayReset(stage, player, monster, logs);
-            await delay(0.2)
           } else {
-            displayReset(stage, player, monster, logs);
-            await delay(0.2)
             logs.push(chalk.redBright(`지름길 개척 !`) + chalk.green(` 하지만, 실패했다 ! 주사위[${playerSkill2Random}] | [90이상 성공]`));
-            displayReset(stage, player, monster, logs);
-            await delay(0.2)
             monster.monsterTurnChoice(player, logs);
-            displayReset(stage, player, monster, logs);
-            await delay(0.2)
           }
         }
 
@@ -285,7 +262,7 @@ const battle = async (stage, player, monster) => {
 
 
 //스테이지 클리어 보상
-async function StageClear(player, monster, stage) {
+async function stageClear(player, monster, stage) {
   console.clear();
   console.log(chalk.magentaBright(`\n===================== 랜 덤 보 상 =====================`));
   console.log(
@@ -295,29 +272,16 @@ async function StageClear(player, monster, stage) {
     ),
   );
   console.log(chalk.magentaBright(`=======================================================\n`));
-  if (stage === 6) {
-    console.log(chalk.cyanBright.bold(` 중간 BOSS : 계단지옥 돌파 !! 보상을 5회 획득합니다.\n`));
-    await delay(0.2)
-    RandomReward(player, stage);
-    await delay(0.2)
-    RandomReward(player, stage);
-    await delay(0.2)
-    RandomReward(player, stage);
-    await delay(0.2)
-    RandomReward(player, stage);
-    await delay(0.2)
-    RandomReward(player, stage);
-    await delay(0.2)
-  } else {
-    console.log(chalk.cyanBright(`랜덤 보상을 3회 획득합니다.`));
-    await delay(0.5)
-    RandomReward(player, stage);
-    await delay(0.3)
-    RandomReward(player, stage);
-    await delay(0.3)
-    RandomReward(player, stage);
-    await delay(0.3)
-  }
+
+  // 불필요한 반복 간소화
+  await delay(0.2)
+  console.log(chalk.cyanBright.bold(`${stage === 6 ? `${monster.name} 돌파 !! 보상을 5회 획득합니다.`:` 랜덤 보상을 3회 획득합니다.  `} \n`));
+    for(let i = 0; i < (stage ===6 ? 5 : 3); i++) {
+      RandomReward(player, stage);
+      await delay(0.2)
+    }
+
+
 }
 
 // 랜덤 뽑기 보상 ~~ !
@@ -391,20 +355,19 @@ export async function startGame() {
     let monster;
     //10층 막보
     if (stage % 10 === 0 && stage !== 0) {
-      monster = new Monster("최종BOSS : 정상으로 향하는 길", 2999, 180)
+       monster = new Monster("최종BOSS : 정상으로 향하는 길", 2999, 180)
     }
     //5층 중보
     else if (stage % 5 === 0 && stage !== 0) {
-      monster = new Monster("중간BOSS : 계단지옥", 777, 77)
+       monster = new Monster("중간BOSS : 계단지옥", 777, 77)
     }
     //일반 층
     else {
-      monster = new Monster(RandomName[RandomNameChoice], stage * 80 + stage ** 3 + 80, stage * 2 + stage ** 2 + 8)
+       monster = new Monster(RandomName[RandomNameChoice], stage * 80 + stage ** 3 + 80, stage * 2 + stage ** 2 + 8)
     }
 
     //배틀 진입
     await battle(stage, player, monster);
-
 
 
     // 패배 시
@@ -428,7 +391,7 @@ export async function startGame() {
     // 스테이지 클리어 처리
     stage++
     if (stage <= 10) {
-      await StageClear(player, monster, stage);
+      await stageClear(player, monster, stage);
       readlineSync.keyIn('\n 스페이스바를 눌러서 다음 스테이지로 !');
     }
 
@@ -458,13 +421,13 @@ async function gameover() {
   console.log(chalk.yellowBright("체력이 모두 소모되었다......."));
   console.log(chalk.redBright("등산가는 눈앞이 깜깜해졌다......."));
   await delay(2);
-  await TestText("GAME - OVER", 0.3, chalk.redBright, chalk.white)
+  await textEffect("GAME - OVER", 0.3, chalk.redBright, chalk.white)
 
 }
 // 엔딩 ..?
 async function clearEnding() {
   await delay(1.6)
-  await TestText("GAME-CLEAR !!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
+  await textEffect("GAME-CLEAR !!", 0.12, chalk.yellowBright, chalk.green.bind(chalk))
   await delay(0.3)
   console.log(chalk.greenBright(`1000M 등산 완료 !`));
   await delay(0.4)
@@ -477,14 +440,14 @@ async function clearEnding() {
 }
 
 
-// TEST 문자열 앞에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
-export async function TestText(text, setDelay, color, varcolor) {
-  let TestTextMes = ""
+// 문자열 앞에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
+export async function textEffect(text, setDelay, color, varcolor) {
+  let textEffectString = ""
   for (let i = 0; i < text.length; i++) {
     console.clear()
-    TestTextMes += text[i]
+    textEffectString += text[i]
     console.log(varcolor(('='.repeat(75))));
-    console.log(color(figlet.textSync(TestTextMes)));
+    console.log(color(figlet.textSync(textEffectString)));
     console.log(varcolor(('='.repeat(75))));
 
     await delay(setDelay);
@@ -492,14 +455,14 @@ export async function TestText(text, setDelay, color, varcolor) {
   await delay(0.5);
 }
 
-// TEST 문자 뒤에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
-export async function TextMoveL(text, setDelay, color, varcolor) {
-  let TestTextMes = ""
+// 문자 뒤에서부터 출력 (출력문자열, 출력지연(초), chalk.텍스트색상, chalk.===색상)
+export async function textEffectReverse(text, setDelay, color, varcolor) {
+  let textEffectString = ""
   for (let i = 0; i < text.length; i++) {
     console.clear();
-    TestTextMes = text.slice(text.length - i - 1, text.length)
+    textEffectString = text.slice(text.length - i - 1, text.length)
     console.log(varcolor(('='.repeat(75))));
-    console.log(color(figlet.textSync(TestTextMes, {
+    console.log(color(figlet.textSync(textEffectString, {
       font: 'Standard',
       horizontalLayout: 'default',
       verticalLayout: 'default'
